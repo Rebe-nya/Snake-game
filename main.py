@@ -1,13 +1,11 @@
-import pygame
+# TODO: config, center everything in menu, make selection in menu (on hover), game
 
+from libs import pygame
 pygame.init()
 
-screenSize = (800, 800)
-screen = pygame.display.set_mode(screenSize)
-clock = pygame.time.Clock()
-draw = pygame.draw
-rect = draw.rect
-flip = pygame.display.flip
+from libs import *
+from utils import exit_game
+from menu import menu
 
 def map():
     lightGreen = (0, 200, 0)
@@ -24,16 +22,24 @@ def map():
             else:
                 rect(screen, darkGreen, (x, y, sqr, sqr))
 
-clock.tick(60)
-map()
+def config():
+    if not path.exists("config.ini"):
+        with open("config.ini", "w") as configfile:
+            config = configparser.ConfigParser()
+            config["DEFAULT"] = {
+            'screen_width': 800,
+            'screen_height': 800,
+            'fps': 60
+        }
+        config.write(configfile)
+    else:
+        config = configparser.ConfigParser()
+        config.read("config.ini")
 
-font = pygame.font.Font("Fonts/04b_30/04B_30__.ttf", 32)
-text = font.render("Snake Game", True, (255, 255, 255))
-screen.blit(text, (screenSize[0] // 2 - text.get_width() // 2, screenSize[1] // 2 - text.get_height() // 2))
-flip()
+#map()
+
+clock.tick(60)
 
 while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            exit()
+    menu()
+    exit_game()
