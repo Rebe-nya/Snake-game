@@ -1,10 +1,10 @@
-# TODO: config, center everything in menu, make selection in menu (on hover), game
+# TODO: center everything in menu, offset, game
 
 from libs import pygame
 pygame.init()
 
 from libs import *
-from utils import exit_game
+from utils import *
 from menu import menu
 
 def map():
@@ -22,24 +22,29 @@ def map():
             else:
                 rect(screen, darkGreen, (x, y, sqr, sqr))
 
-def config():
+def config(screenSize, fps):
     if not path.exists("config.ini"):
-        with open("config.ini", "w") as configfile:
-            config = configparser.ConfigParser()
-            config["DEFAULT"] = {
-            'screen_width': 800,
-            'screen_height': 800,
-            'fps': 60
-        }
-        config.write(configfile)
-    else:
         config = configparser.ConfigParser()
-        config.read("config.ini")
+        config["Settings"] = {
+            'screen_width': screenSize[0],
+            'screen_height': screenSize[1],
+            'fps': fps
+        }
+        with open("config.ini", "w") as configfile:
+            config.write(configfile)
+    config = configparser.ConfigParser()
+    config.read("config.ini")
+
+    screenSize = (
+        config.getint("Settings", "screen_width"),
+        config.getint("Settings", "screen_height")
+    )
+    fps = config.getint("Settings", "fps")
+    return screenSize, fps
+
+screenSize, fps = config(screenSize, fps)
+screen = display.set_mode(screenSize)
+clock.tick(fps)
 
 #map()
-
-clock.tick(60)
-
-while True:
-    menu()
-    exit_game()
+menu()
