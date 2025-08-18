@@ -1,5 +1,5 @@
 import pygame
-from pygame import draw, font, display, time, display, QUIT, SYSTEM_CURSOR_HAND, SYSTEM_CURSOR_ARROW, MOUSEBUTTONDOWN
+from pygame import draw, font, display, time, display, QUIT, SYSTEM_CURSOR_HAND, SYSTEM_CURSOR_ARROW, MOUSEBUTTONDOWN, image
 from pygame.draw import rect, ellipse, arc
 from pygame.gfxdraw import arc
 from pygame.display import flip, set_mode
