@@ -1,4 +1,4 @@
-# TODO: center everything in menu, offset, game
+# TODO: game
 
 from libs import pygame
 pygame.init()
@@ -21,6 +21,7 @@ def map():
                 rect(screen, lightGreen, (x, y, sqr, sqr))
             else:
                 rect(screen, darkGreen, (x, y, sqr, sqr))
+    flip()
 
 def config(screenSize, fps):
     if not path.exists("config.ini"):
@@ -46,5 +47,57 @@ screenSize, fps = config(screenSize, fps)
 screen = display.set_mode(screenSize)
 clock.tick(fps)
 
-#map()
-menu()
+#menu()
+
+"""
+map()
+ellipse(screen, (0, 0, 255), (5, 5, 40, 40))
+ellipse(screen, (255, 0, 0), (55, 5, 40, 40))
+rect(screen, (255, 0, 0), (25, 5, 55, 40))
+flip()
+
+time.wait(2000)
+map()
+ellipse(screen, (255, 0, 0), (5, 5, 40, 40))
+flip()
+"""
+
+map()
+ellipse(screen, (0, 0, 255), (5 + 0 * 50, 5, 40, 40))
+ellipse(screen, (0, 0, 255), (55 + 0 * 50, 5, 40, 40))
+rect(screen, (0, 0, 255), (25 + 0 * 50, 5, 55, 40))
+ellipse(screen, (0, 0, 255), (5 + 0 * 50, 55, 40, 40))
+rect(screen, (0, 0, 255), (5 + 0 * 50, 25, 40, 55))
+
+"""
+arc(
+    screen,
+    (0, 0, 255),
+    (40, 40, 40, 40),  # rect: x, y, w, h
+    radians(90),              # start_angle
+    radians(180),              # end_angle
+    5                              # tloušťka oblouku (např. 8 pixelů)
+)
+arc(
+    screen,
+    (0, 0, 255),
+    (100, 100, 45, 45),  # rect: x, y, w, h
+    radians(90),              # start_angle
+    radians(180),              # end_angle
+    5                              # tloušťka oblouku (např. 8 pixelů)
+)
+"""
+for position in range(11):
+    arc(screen, 55 - position, 55 - position, 10 - position, 180, 270, (0, 0, 255))
+flip()
+
+"""
+    arc(screen, 45 - i, 45 - i, 50, 90, 180, (0, 0, 255))
+
+    time.wait(100)
+"""
+
+while True:
+    for event in pygame.event.get():
+        if event.type == QUIT:
+            quit()
