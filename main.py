@@ -1,4 +1,4 @@
-# TODO: game functions, snake body, hover icon
+# TODO: game functions, snake body
 
 from libs import pygame
 pygame.init()

@@ -2,19 +2,39 @@ from libs import *
 from utils import text_font, screenSize, screen, blit, close_window
 
 # Menu
-def rainbow_text(speed, play_rect, exit_rect, header_font, header_rect):
+def menu_render(speed, play_rect, exit_rect, header_font, header_rect, menu_font, play, exit, button_offset):
     for i in range(360):
+        def text_render():
+            screen.fill((16, 16, 16))
+            blit(header, header_rect)
+            blit(play, play_rect)
+            blit(exit, exit_rect)
+
+        def select(x, y):
+            select = menu_font.render(">", True, (255, 255, 255))
+            select_rect = select.get_rect(center=center(-x - 32, y))
+            blit(select, select_rect)
+
         rgb = colorsys.hsv_to_rgb(i / 360, 1, 1)
         color = tuple(int(c * 255) for c in rgb)
         header = header_font.render("Snake Game", True, color)
-        blit(header, header_rect)
-        flip()
+
+        if play_rect.collidepoint(get_pos()):
+            text_render()
+            select(play_rect[3], 0)
+            flip()
+        elif exit_rect.collidepoint(get_pos()):
+            text_render()
+            select(exit_rect[3], button_offset)
+            flip()
+        else:
+            text_render()
+            flip()
 
         if play_rect.collidepoint(get_pos()) or exit_rect.collidepoint(get_pos()):
             set_cursor(SYSTEM_CURSOR_HAND)
         else:
             set_cursor(SYSTEM_CURSOR_ARROW)
-
         for event in pygame.event.get():
             if event.type == QUIT:
                 quit()
@@ -36,8 +56,8 @@ def rainbow_text(speed, play_rect, exit_rect, header_font, header_rect):
         time.wait(speed)
     return True
 
-def center(y):
-    x = screenSize[0] // 2
+def center(x, y):
+    x += screenSize[0] // 2
     y += screenSize[1] // 2
     return (x, y)
 
@@ -48,22 +68,24 @@ def menu():
     menu_font = text_font(menu_size)
     play_text = "Play"
     exit_text = "Exit"
-    offset = 15
-    offset = ((40 + 30 * 2)/3) + offset
+    button_offset = 15
+    button_offset = ((40 + 30 * 2)/3) + button_offset
 
     play = menu_font.render(play_text, True, (255, 255, 255))
     exit = menu_font.render(exit_text, True, (255, 255, 255))
     header = header_font.render("Snake Game", True, (255, 255, 255))
 
-    header_rect = header.get_rect(center=center(-offset))
-    play_rect = play.get_rect(center=center(0))
-    exit_rect = exit.get_rect(center=center(offset))
+    header_rect = header.get_rect(center=center(0, -button_offset))
+    play_rect = play.get_rect(center=center(0, 0))
+    exit_rect = exit.get_rect(center=center(0, button_offset))
 
     screen.fill((16, 16, 16))
+    blit(header, header_rect)
     blit(play, play_rect)
     blit(exit, exit_rect)
     flip()
-    while rainbow_text(play_rect=play_rect, exit_rect=exit_rect, header_font=header_font, header_rect=header_rect, speed=10):
+
+    while menu_render(play_rect=play_rect, exit_rect=exit_rect, header_font=header_font, header_rect=header_rect, speed=10, menu_font=menu_font, play=play, exit=exit, button_offset=button_offset):
         pass
 
 # Game Map
