@@ -49,7 +49,6 @@ def menu_render(speed, play_rect, exit_rect, header_font, header_rect, menu_font
                         flip()
                         close_window()
                         time.wait(5)
-                    map()
                     return False
                 if exit_rect.collidepoint(event.pos):
                     quit()
@@ -93,13 +92,13 @@ def map():
     screen.fill((16, 16, 16))
     offset = 40
     sqr = 40
-    num_x_sqr = 0
-    num_y_sqr = 0
     for opacity in range(0, 256, 8):
         surface = pygame.Surface((screenSize[0], screenSize[1]), pygame.SRCALPHA)
+        frame_height = frame(opacity, surface)
         lightGreen = (121, 198, 83, opacity)
         darkGreen = (106, 191, 64, opacity)
-        frame_height = frame(opacity, surface)
+        num_x_sqr = 0
+        num_y_sqr = 0
         for j in range(((screenSize[1] - offset - frame_height) // sqr) - offset // sqr):
             num_y_sqr += 1
             for i in range(((screenSize[0] - offset) // sqr) - offset // sqr):
@@ -115,7 +114,7 @@ def map():
         flip()
         time.wait(5)
     num_x_sqr = num_x_sqr // num_y_sqr
-    flip()
+    return num_x_sqr, num_y_sqr
     
 def frame(opacity, surface):
     def icons():
@@ -139,3 +138,6 @@ def frame(opacity, surface):
     rect(surface, (64, 115, 38, opacity), (0, 0, screenSize[0], height))
     icons()
     return height
+
+
+
