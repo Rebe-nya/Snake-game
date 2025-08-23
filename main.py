@@ -1,4 +1,4 @@
-# TODO: game functions, snake body
+# TODO: game functions, snake body, highscore, score
 
 from libs import *
 from utils import *
