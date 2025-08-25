@@ -136,4 +136,6 @@ def map():
         screen.blit(surface, (0, 0))
         flip()
         time.wait(5)
-    return num_x_sqr, num_y_sqr
+    map_x = center_x - (num_x_sqr * sqr_size) // 2
+    map_y = center_y - (num_y_sqr * sqr_size) // 2 + top_bar_height // 2
+    return map_x, map_y, num_x_sqr, num_y_sqr, sqr_size
