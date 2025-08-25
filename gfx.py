@@ -1,4 +1,4 @@
-from libs import *
+from libs import pygame, colorsys, get_pos, flip, set_cursor, SYSTEM_CURSOR_ARROW, SYSTEM_CURSOR_HAND, QUIT, MOUSEBUTTONDOWN, time, image, rect
 from utils import text_font, screenSize, screen, blit, close_window, center
 
 # Menu
@@ -85,6 +85,8 @@ def menu():
         pass
 
 # Game Map
+map_rendered = False
+
 def top_bar(opacity, surface, top_bar_height):
     def icons():
         apple = image.load("assets/apple.png").convert_alpha()
@@ -107,22 +109,22 @@ def top_bar(opacity, surface, top_bar_height):
     icons()
 
 def map():
-    top_bar_height = 80
-
+    global map_rendered
+        
+    center_x, center_y = center(0, 0)
     num_x_sqr = 10
     num_y_sqr = 10
     sqr_size = 60
-    center_x, center_y = center(0, 0)
+    top_bar_height = 80
 
-    for opacity in range(0, 256, 8):
-        surface = pygame.Surface((screenSize[0], screenSize[1]), pygame.SRCALPHA)
-        top_bar(opacity, surface, top_bar_height)
-
+    def map_render(opacity):
         lightGreen = (121, 198, 83, opacity)
         darkGreen = (106, 191, 64, opacity)
         x = 0
         y = 0
+        surface = pygame.Surface((screenSize[0], screenSize[1]), pygame.SRCALPHA)
 
+        top_bar(opacity, surface, top_bar_height)
         for j in range(num_y_sqr):
             for i in range(num_x_sqr):
                 x = i * sqr_size + center_x - (num_x_sqr * sqr_size) // 2
@@ -135,7 +137,15 @@ def map():
 
         screen.blit(surface, (0, 0))
         flip()
-        time.wait(5)
+
+    if map_rendered:
+        map_render(255)
+    else:
+        for opacity in range(0, 256, 8):
+            map_render(opacity)
+            time.wait(5)
+        map_rendered = True
+
     map_x = center_x - (num_x_sqr * sqr_size) // 2
     map_y = center_y - (num_y_sqr * sqr_size) // 2 + top_bar_height // 2
     return map_x, map_y, num_x_sqr, num_y_sqr, sqr_size
