@@ -2,9 +2,9 @@ from libs import pygame, colorsys, get_pos, flip, set_cursor, SYSTEM_CURSOR_ARRO
 from utils import text_font, screenSize, screen, blit, close_window, center
 
 # Menu
-def menu_render(speed, play_rect, exit_rect, header_font, header_rect, menu_font, play, exit, button_offset):
+def render_menu(speed, play_rect, exit_rect, header_font, header_rect, menu_font, play, exit, button_offset):
     for i in range(360):
-        def text_render():
+        def render_text():
             screen.fill((16, 16, 16))
             blit(header, header_rect)
             blit(play, play_rect)
@@ -21,15 +21,15 @@ def menu_render(speed, play_rect, exit_rect, header_font, header_rect, menu_font
 
         # Selection symbol, cursor
         if play_rect.collidepoint(get_pos()):
-            text_render()
+            render_text()
             select(play_rect[3], 0)
             flip()
         elif exit_rect.collidepoint(get_pos()):
-            text_render()
+            render_text()
             select(exit_rect[3], button_offset)
             flip()
         else:
-            text_render()
+            render_text()
             flip()
         if play_rect.collidepoint(get_pos()) or exit_rect.collidepoint(get_pos()):
             set_cursor(SYSTEM_CURSOR_HAND)
@@ -81,12 +81,22 @@ def menu():
     blit(exit, exit_rect)
     flip()
 
-    while menu_render(play_rect=play_rect, exit_rect=exit_rect, header_font=header_font, header_rect=header_rect, speed=10, menu_font=menu_font, play=play, exit=exit, button_offset=button_offset):
+    while render_menu(play_rect=play_rect, exit_rect=exit_rect, header_font=header_font, header_rect=header_rect, speed=10, menu_font=menu_font, play=play, exit=exit, button_offset=button_offset):
         pass
 
 # Game Map
-map_rendered = False
+top_bar_height = 80
+map_offset = 100
+num_sqr = [10, 10]
 
+sqr_size_x = (screenSize[0] - map_offset) // num_sqr[0]
+sqr_size_y = (screenSize[1] - map_offset - top_bar_height) // num_sqr[1]
+if sqr_size_x < sqr_size_y:
+    sqr_size = sqr_size_x
+else:
+    sqr_size = sqr_size_y
+
+map_rendered = False
 def top_bar(opacity, surface, top_bar_height):
     def icons():
         apple = image.load("assets/apple.png").convert_alpha()
@@ -110,14 +120,8 @@ def top_bar(opacity, surface, top_bar_height):
 
 def map():
     global map_rendered
-        
-    center_x, center_y = center(0, 0)
-    num_x_sqr = 10
-    num_y_sqr = 10
-    sqr_size = 60
-    top_bar_height = 80
 
-    def map_render(opacity):
+    def render_map(opacity):
         lightGreen = (121, 198, 83, opacity)
         darkGreen = (106, 191, 64, opacity)
         x = 0
@@ -125,10 +129,10 @@ def map():
         surface = pygame.Surface((screenSize[0], screenSize[1]), pygame.SRCALPHA)
 
         top_bar(opacity, surface, top_bar_height)
-        for j in range(num_y_sqr):
-            for i in range(num_x_sqr):
-                x = i * sqr_size + center_x - (num_x_sqr * sqr_size) // 2
-                y = j * sqr_size + center_y - (num_y_sqr * sqr_size) // 2 + top_bar_height // 2
+        for j in range(num_sqr[1]):
+            for i in range(num_sqr[0]):
+                x = i * sqr_size + center_x - (num_sqr[0] * sqr_size) // 2
+                y = j * sqr_size + center_y - (num_sqr[1] * sqr_size) // 2 + top_bar_height // 2
                 if (i + j) % 2 == 0:
                     rect(surface, lightGreen, (x, y, sqr_size, sqr_size))
                 else:
@@ -136,16 +140,16 @@ def map():
                 close_window()
 
         screen.blit(surface, (0, 0))
-        flip()
 
     if map_rendered:
-        map_render(255)
+        render_map(255)
     else:
         for opacity in range(0, 256, 8):
-            map_render(opacity)
+            render_map(opacity)
+            flip()
             time.wait(5)
         map_rendered = True
 
-    map_x = center_x - (num_x_sqr * sqr_size) // 2
-    map_y = center_y - (num_y_sqr * sqr_size) // 2 + top_bar_height // 2
-    return map_x, map_y, num_x_sqr, num_y_sqr, sqr_size
+center_x, center_y = center(0, 0)
+map_x = center_x - (num_sqr[0] * sqr_size) // 2
+map_y = center_y - (num_sqr[1] * sqr_size) // 2 + top_bar_height // 2
