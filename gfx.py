@@ -85,9 +85,11 @@ def menu():
         pass
 
 # Game Map
+map_rendered = False
 top_bar_height = 80
 map_offset = 100
 num_sqr = [10, 10]
+center_x, center_y = center(0, 0)
 
 sqr_size_x = (screenSize[0] - map_offset) // num_sqr[0]
 sqr_size_y = (screenSize[1] - map_offset - top_bar_height) // num_sqr[1]
@@ -96,7 +98,6 @@ if sqr_size_x < sqr_size_y:
 else:
     sqr_size = sqr_size_y
 
-map_rendered = False
 def top_bar(opacity, surface, top_bar_height):
     def icons():
         apple = image.load("assets/apple.png").convert_alpha()
@@ -131,8 +132,8 @@ def map():
         top_bar(opacity, surface, top_bar_height)
         for j in range(num_sqr[1]):
             for i in range(num_sqr[0]):
-                x = i * sqr_size + center_x - (num_sqr[0] * sqr_size) // 2
-                y = j * sqr_size + center_y - (num_sqr[1] * sqr_size) // 2 + top_bar_height // 2
+                x = i * sqr_size + center_x - (num_sqr[0] * sqr_size) / 2
+                y = j * sqr_size + center_y - (num_sqr[1] * sqr_size) / 2 + top_bar_height / 2
                 if (i + j) % 2 == 0:
                     rect(surface, lightGreen, (x, y, sqr_size, sqr_size))
                 else:
@@ -150,6 +151,6 @@ def map():
             time.wait(5)
         map_rendered = True
 
-center_x, center_y = center(0, 0)
-map_x = center_x - (num_sqr[0] * sqr_size) // 2
-map_y = center_y - (num_sqr[1] * sqr_size) // 2 + top_bar_height // 2
+# First square position
+map_x = center_x - (num_sqr[0] * sqr_size) / 2
+map_y = center_y - (num_sqr[1] * sqr_size) / 2 + top_bar_height / 2
