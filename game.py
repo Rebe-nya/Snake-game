@@ -1,41 +1,56 @@
-from libs import pygame, QUIT, flip, time, clock
+from libs import pygame, QUIT, flip, time, clock, key, floor
 from utils import controls, fps
-from gfx import map, map_x, map_y, num_sqr
-#from main import fps
-from snake import render_circle, game_grid
+from gfx import map, num_sqr
+from snake import render_circle
 
 def game():
-    # Start position
-    x = 1
-    y = 4
+    global x, y, direction
+    x, y = 1.0, 4.0
+    speed = 1
+    history = [(x - 1, y), (x, y), (x + 1, y)]
+    direction = None
 
-    grid = game_grid(0, 0)
-    print(grid)
-    print(map_y)
-    loop = True
-    while loop:
-        clock.tick(fps)
+    def move_snake(body_num):
+        global x, y, direction
+
+        if direction != None:
+            if direction == "left" and x > 0: x -= 1
+            elif direction == "right" and x < num_sqr[0] - 1: x += 1
+            elif direction == "up" and y > 0: y -= 1
+            elif direction == "down" and y < num_sqr[1] - 1: y += 1
+            history.append((x, y))
+            history.pop(0)
+
+        if (x, y) != history[-1]: history.append((x, y))
+        if len(history) > body_num: history.pop(0)
+        
         map()
-        render_circle(x, y, 80)
+        for i in range(body_num):
+            x1, y1 = history[i]
+            render_circle(x1, y1, 80)
         flip()
 
+    running = True
+    while running:
         for event in pygame.event.get():
             if event.type == QUIT:
-                quit()
-                loop = False
+                running = False
 
-        keys = pygame.key.get_pressed()
-        if x > 0:
+        print(history)
+
+        clock.tick(fps)
+
+        for i in range(speed * 100):
+            keys = key.get_pressed()
             if any(keys[key] for key in controls["left"]):
-                x -= 1
-        if x < num_sqr[0] - 1:
-            if any(keys[key] for key in controls["right"]):
-                x += 1
-        if any(keys[key] for key in controls["up"]):
-            if y > 0:
-                y -= 1
-        if any(keys[key] for key in controls["down"]):
-            if y < num_sqr[1] - 1:
-                y += 1
+                direction = "left"
+            elif any(keys[key] for key in controls["right"]):
+                direction = "right"
+            elif any(keys[key] for key in controls["up"]):
+                direction = "up"
+            elif any(keys[key] for key in controls["down"]):
+                direction = "down"
 
-        time.wait(50)
+        move_snake(direction, 3)
+        
+        time.wait(100)
