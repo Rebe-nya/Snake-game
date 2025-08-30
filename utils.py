@@ -1,4 +1,8 @@
-from libs import QUIT, pygame, display, time, set_mode
+from libs import QUIT, pygame, display, time, set_mode, font, path, configparser
+
+# Default values
+screenSize = (800, 800)
+fps = 60
 
 controls = {
     "up": [pygame.K_UP, pygame.K_w],
@@ -8,8 +12,28 @@ controls = {
     "enter": [pygame.K_KP_ENTER]
 }
 
+def config(screenSize, fps):
+    if not path.exists("config.ini"):
+        config = configparser.ConfigParser()
+        config["Settings"] = {
+            'screen_width': screenSize[0],
+            'screen_height': screenSize[1],
+            'fps': fps
+        }
+        with open("config.ini", "w") as configfile:
+            config.write(configfile)
+    config = configparser.ConfigParser()
+    config.read("config.ini")
+
+    screenSize = (
+        config.getint("Settings", "screen_width"),
+        config.getint("Settings", "screen_height")
+    )
+    fps = config.getint("Settings", "fps")
+    return screenSize, fps
+
 def text_font(size):
-    return pygame.font.Font("fonts/04b_30/04B_30__.ttf", size)
+    return font.Font("fonts/04b_30/04B_30__.ttf", size)
 
 def close_window():
     for event in pygame.event.get():
@@ -21,10 +45,7 @@ def center(center_x, center_y):
     center_y += screenSize[1] // 2
     return (center_x, center_y)
 
-
-# Default values
-screenSize = (800, 800)
-fps = 60
-
+screenSize, fps = config(screenSize, fps)
+screen = display.set_mode(screenSize)
 screen = set_mode(screenSize)
 blit = screen.blit
