@@ -1,6 +1,42 @@
 from libs import pygame, colorsys, get_pos, flip, set_cursor, SYSTEM_CURSOR_ARROW, SYSTEM_CURSOR_HAND, QUIT, MOUSEBUTTONDOWN, time, image, rect
 from utils import text_font, screenSize, screen, blit, close_window, center
 
+#---------------------------------------------
+# Utils
+def game_grid(x, y):
+    x = map_x + sqr_size / 2 + x * sqr_size
+    y = map_y + sqr_size / 2 + y * sqr_size
+    return x, y
+
+# Map values
+map_rendered = False
+top_bar_height = 80
+map_offset = 100
+num_sqr = [10, 10]
+center_x, center_y = center(0, 0)
+
+# Square size calculation
+sqr_size_x = (screenSize[0] - map_offset) // num_sqr[0]
+sqr_size_y = (screenSize[1] - map_offset - top_bar_height) // num_sqr[1]
+if sqr_size_x < sqr_size_y: sqr_size = sqr_size_x
+else: sqr_size = sqr_size_y
+
+# First square position
+map_x = center_x - (num_sqr[0] * sqr_size) / 2
+map_y = center_y - (num_sqr[1] * sqr_size) / 2 + top_bar_height / 2
+
+# Apple
+global image_apple
+image_apple = image.load("assets/apple.png").convert_alpha()
+image_game_apple = pygame.transform.smoothscale(image_apple, (sqr_size * 0.8, sqr_size * 0.8))
+
+def apple(x, y):
+    global image_game_apple
+    x, y = game_grid(x, y)
+    apple_rect = image_game_apple.get_rect(center=(x, y))
+    screen.blit(image_game_apple, apple_rect)
+#---------------------------------------------
+
 # Menu
 def render_menu(speed, play_rect, exit_rect, header_font, header_rect, menu_font, play, exit, button_offset):
     for i in range(360):
@@ -31,15 +67,14 @@ def render_menu(speed, play_rect, exit_rect, header_font, header_rect, menu_font
         else:
             render_text()
             flip()
-        if play_rect.collidepoint(get_pos()) or exit_rect.collidepoint(get_pos()):
-            set_cursor(SYSTEM_CURSOR_HAND)
-        else:
-            set_cursor(SYSTEM_CURSOR_ARROW)
+
+        if play_rect.collidepoint(get_pos()) or exit_rect.collidepoint(get_pos()): set_cursor(SYSTEM_CURSOR_HAND)
+        else: set_cursor(SYSTEM_CURSOR_ARROW)
         
         # Menu button functions
         for event in pygame.event.get():
-            if event.type == QUIT:
-                quit()
+            if event.type == QUIT: quit()
+
             if event.type == MOUSEBUTTONDOWN and event.button == 1:
                 if play_rect.collidepoint(event.pos):
                     set_cursor(SYSTEM_CURSOR_ARROW)
@@ -52,8 +87,8 @@ def render_menu(speed, play_rect, exit_rect, header_font, header_rect, menu_font
                         close_window()
                         time.wait(5)
                     return False
-                if exit_rect.collidepoint(event.pos):
-                    quit()
+                
+                if exit_rect.collidepoint(event.pos): quit()
         time.wait(speed)
     return True
 
@@ -85,34 +120,21 @@ def menu():
         pass
 
 # Game Map
-map_rendered = False
-top_bar_height = 80
-map_offset = 100
-num_sqr = [10, 10]
-center_x, center_y = center(0, 0)
-
-sqr_size_x = (screenSize[0] - map_offset) // num_sqr[0]
-sqr_size_y = (screenSize[1] - map_offset - top_bar_height) // num_sqr[1]
-if sqr_size_x < sqr_size_y:
-    sqr_size = sqr_size_x
-else:
-    sqr_size = sqr_size_y
-
 def top_bar(opacity, surface, top_bar_height):
     def icons():
-        apple = image.load("assets/apple.png").convert_alpha()
+        global image_apple
         highscore = image.load("assets/highscore.png").convert_alpha()
 
-        apple = pygame.transform.smoothscale(apple, (50, 50))
+        image_apple = pygame.transform.smoothscale(image_apple, (50, 50))
         highscore = pygame.transform.smoothscale(highscore, (50, 50))
 
-        apple.set_alpha(opacity)
+        image_apple.set_alpha(opacity)
         highscore.set_alpha(opacity)
 
-        apple_rect = apple.get_rect(center=(top_bar_height // 2, top_bar_height // 2))
+        apple_rect = image_apple.get_rect(center=(top_bar_height // 2, top_bar_height // 2))
         highscore_rect = highscore.get_rect(center=(top_bar_height // 2 + 125, top_bar_height // 2))
 
-        surface.blit(apple, apple_rect)
+        surface.blit(image_apple, apple_rect)
         surface.blit(highscore, highscore_rect)
 
     surface.fill((74, 134, 45, opacity))
@@ -134,10 +156,10 @@ def map():
             for i in range(num_sqr[0]):
                 x = i * sqr_size + center_x - (num_sqr[0] * sqr_size) / 2
                 y = j * sqr_size + center_y - (num_sqr[1] * sqr_size) / 2 + top_bar_height / 2
-                if (i + j) % 2 == 0:
-                    rect(surface, lightGreen, (x, y, sqr_size, sqr_size))
-                else:
-                    rect(surface, darkGreen, (x, y, sqr_size, sqr_size))
+
+                if (i + j) % 2 == 0: rect(surface, lightGreen, (x, y, sqr_size, sqr_size))
+                else: rect(surface, darkGreen, (x, y, sqr_size, sqr_size))
+
                 close_window()
 
         screen.blit(surface, (0, 0))
@@ -150,7 +172,3 @@ def map():
             flip()
             time.wait(5)
         map_rendered = True
-
-# First square position
-map_x = center_x - (num_sqr[0] * sqr_size) / 2
-map_y = center_y - (num_sqr[1] * sqr_size) / 2 + top_bar_height / 2
