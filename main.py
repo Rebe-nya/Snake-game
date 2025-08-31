@@ -1,5 +1,4 @@
-# TODO: game functions, highscore, score
-#       snake body(decreasing size of circle)
+# TODO: game functions, highscore, score, snake class, snake body(decreasing size of circle)
 
 from libs import *
 from utils import screenSize, fps, close_window
