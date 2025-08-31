@@ -7,9 +7,9 @@ from pygame.font import Font
 from pygame.time import Clock
 from pygame.mouse import get_pos, set_cursor, get_pressed
 from os import path
-from math import radians, floor
+from math import floor
 import colorsys
 import configparser
-import math
+import random
 
 clock = Clock()
