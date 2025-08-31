@@ -1,13 +1,8 @@
 from libs import filled_circle, aacircle, filled_polygon, aapolygon
 from utils import screen, close_window
-from gfx import map_x, map_y, sqr_size
+from gfx import sqr_size, game_grid
 
 color = (0, 0, 255)
-
-def game_grid(x, y):
-    x = map_x + sqr_size / 2 + x * sqr_size
-    y = map_y + sqr_size / 2 + y * sqr_size
-    return x, y
 
 def render_circle(x, y, size):
     size = (sqr_size / 2) * (size / 100)
@@ -22,6 +17,7 @@ def render_polygon(x1, y1, size1, x2, y2, size2):
         x, y = game_grid(x, y)
         y = y - size
         return x, y
+    
     x1, y1 = position(x1, y1, size1)
     x2, y2 = position(x2, y2, size2)
     points = [(x1, y1), (x1, y1 + size1 * 2), (x2, y2 + size2 * 2), (x2, y2)]
@@ -39,15 +35,6 @@ while True:
 """
 
 '''
-def circle_body(x1, y1, size1, x2, y2, size2):
-    x2 = x2 * 10
-    for i in range(x1, x2, 1):
-        temp = x1 + i / 10
-        size = size1 - (size1 - size2) * (i / 10)
-        print(size1, size2)
-        print(size)
-        circle_render(temp, y1, size)
-
 # Turn arc
 for position in range(6):
     arc(screen, 50 - position, 50 - position, 5 - position, 180, 270, (0, 0, 255))
